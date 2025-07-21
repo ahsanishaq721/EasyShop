@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.rememberAsyncImagePainter
 import com.example.ecommerceapp.screens.model.Product
-
 @Composable
 fun FeaturedProductCard(product: Product, onProductClick: () -> Unit) {
     Card(

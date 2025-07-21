@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
-
 @Composable
 fun SearchBar(
     query: String,

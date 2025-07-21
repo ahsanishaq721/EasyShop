@@ -1,6 +1,5 @@
 package com.example.ecommerceapp.screens.home
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -76,5 +75,4 @@ fun BottomNavigationBar() {
 
 data class BottomNavItem(
     val title: String, val icon: ImageVector, val route: String, val badgeCount: Int = 0
-
 )

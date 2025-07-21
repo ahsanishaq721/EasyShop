@@ -13,7 +13,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar() {
@@ -48,5 +47,4 @@ fun MyTopAppBar() {
             }
         }
     )
-
 }
