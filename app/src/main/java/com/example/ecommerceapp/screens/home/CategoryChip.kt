@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.example.ecommerceapp.ui.theme.CategoryChipColor
-
 @Composable
 fun CategoryChip(
     icon: String,
