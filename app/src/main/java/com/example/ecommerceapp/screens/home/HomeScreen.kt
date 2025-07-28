@@ -18,16 +18,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.ecommerceapp.screens.model.Category
-import com.example.ecommerceapp.screens.model.Product
-import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import androidx.navigation.NavHostController
+import com.example.ecommerceapp.model.Category
+import com.example.ecommerceapp.model.Product
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onCartClick: () -> Unit) {
     Scaffold(
-        topBar = { MyTopAppBar() },
+        topBar = { MyTopAppBar(onProfileClick, onCartClick) },
         bottomBar = { BottomNavigationBar() }
     ) {
         Column(
@@ -50,7 +49,7 @@ fun HomeScreen() {
             // categories section
 
             SectionTitle(title = "Categories", actionText = "View All") {
-                /* Handle action click */
+                navController.navigate("Categories")
             }
 
             Spacer(Modifier.height(16.dp))
@@ -105,26 +104,17 @@ fun HomeScreen() {
                     id = "2",
                     name = "Laptop",
                     price = 1999.99,
-                    imageUrl = "https://kindpng.com/picc/m/194-1945580_laptop-windows-10-png-windows-10-laptop-10.png",
-                ),
+                    imageUrl = "https://image.pngaaa.com/404/1144404-middle.png",                ),
             )
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(products) {
-                    FeaturedProductCard(it) { }
+                items(products) { product ->
+                    FeaturedProductCard(product) { }
                 }
             }
 
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    EcommerceAppTheme {
-        HomeScreen()
     }
 }

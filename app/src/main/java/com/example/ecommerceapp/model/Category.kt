@@ -1,4 +1,4 @@
-package com.example.ecommerceapp.screens.model
+package com.example.ecommerceapp.model
 
 data class Category(
     val id: Int = 0,
