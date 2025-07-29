@@ -5,7 +5,6 @@ sealed class Screens(val route: String) {
     object Categories : Screens("Categories")
     object Profile : Screens("Profile")
     object Cart : Screens("Cart")
-    object CategoryList : Screens("category_list")
     object ProductsDetails : Screens("product_details/{productId}") {
         fun createRoute(productId: String) = "product_details/$productId"
     }
@@ -14,5 +13,7 @@ sealed class Screens(val route: String) {
         fun createRoute(categoryId: Int) = "product_list/$categoryId"
     }
 
+    object SignIn : Screens("SignIn")
+    object SignUp : Screens("SignUp")
 
 }

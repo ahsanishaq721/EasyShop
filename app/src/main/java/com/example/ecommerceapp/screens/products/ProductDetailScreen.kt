@@ -17,24 +17,27 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
-import com.example.ecommerceapp.model.Product
+import com.example.ecommerceapp.viewmodels.ProductDetailViewModel
 
 @Composable
-fun ProductDetailScreen(productId: String) {
-    val myDummyProduct = Product(
-        id = "1",
-        name = "Smart phone",
-        price = 999.99,
-        imageUrl = "https://image.pngaaa.com/404/1144404-middle.png",
-    )
-    if (myDummyProduct == null) {
+fun ProductDetailScreen(
+    productId: String,
+    productDetailViewModel: ProductDetailViewModel = hiltViewModel()
+) {
+    productDetailViewModel.fetchProductDetails(productId)
+    val selectedProduct by productDetailViewModel.product.collectAsStateWithLifecycle()
+
+    if (selectedProduct == null) {
         Text(text = "Product not found", modifier = Modifier.padding(16.dp))
     } else {
         Column(
@@ -44,9 +47,9 @@ fun ProductDetailScreen(productId: String) {
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
-                    model = myDummyProduct.imageUrl
+                    model = selectedProduct?.imageUrl
                 ),
-                contentDescription = "${myDummyProduct.name} image",
+                contentDescription = "${selectedProduct?.name} image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,14 +59,16 @@ fun ProductDetailScreen(productId: String) {
 
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = myDummyProduct.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            selectedProduct?.name?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "$${myDummyProduct.price}",
+                text = "$${selectedProduct?.price}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )

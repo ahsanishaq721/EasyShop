@@ -33,7 +33,6 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.ecommerceapp.model.Category
-import com.example.ecommerceapp.screens.profile.ProfileScreen
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
 
 @Composable
@@ -79,7 +78,7 @@ fun CategoryItem(category: Category, onClick: () -> Unit) {
                     Image(
                         painter = rememberAsyncImagePainter(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(category.imageUrl)
+                                .data(category.iconUrl)
                                 .crossfade(true)
                                 .build()
                         ),

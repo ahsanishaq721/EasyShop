@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.firebase)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -37,6 +40,11 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
 }
 
 dependencies {
@@ -59,4 +67,27 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.navigation)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
+    // live data
+    implementation(libs.androidx.compose.runtime.livedata)
+    debugImplementation(libs.androidx.livedata)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // retrofit
+    debugImplementation(libs.androidx.retrofit2.retrofit)
+    debugImplementation(libs.androidx.retrofit2.converter.gson)
+    debugImplementation(libs.androidx.google.gson)
+    // room
+    debugImplementation(libs.androidx.room)
+    debugImplementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    // hilt
+    debugImplementation(libs.hilt.android)
+    debugImplementation(libs.hilt.android.compiler)
+    debugImplementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+    // coroutines
+    implementation(libs.kotlinx.coroutines.android)
 }

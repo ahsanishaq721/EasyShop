@@ -19,12 +19,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.ecommerceapp.model.Category
-import com.example.ecommerceapp.model.Product
+import com.example.ecommerceapp.screens.navigation.Screens
+import com.example.ecommerceapp.viewmodels.CategoryViewModel
+import com.example.ecommerceapp.viewmodels.ProductViewModel
 
 @Composable
-fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onCartClick: () -> Unit) {
+fun HomeScreen(
+    navController: NavHostController,
+    onProfileClick: () -> Unit,
+    onCartClick: () -> Unit,
+    productViewModel: ProductViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel = hiltViewModel()
+) {
     Scaffold(
         topBar = { MyTopAppBar(onProfileClick, onCartClick) },
         bottomBar = { BottomNavigationBar() }
@@ -37,6 +46,7 @@ fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onC
             // Search section
             var searchQuery by remember { mutableStateOf("") }
             val focusManager = LocalFocusManager.current
+
             SearchBar(
                 query = searchQuery,
                 onQueryChange = { searchQuery = it }, // Update the state here
@@ -49,24 +59,12 @@ fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onC
             // categories section
 
             SectionTitle(title = "Categories", actionText = "View All") {
-                navController.navigate("Categories")
+                navController.navigate(Screens.Categories.route)
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // mock the categories
-            val categories = listOf(
-                Category(
-                    1,
-                    "Electronics",
-                    "https://cdn-icons-png.flaticon.com/512/1555/1555401.png"
-                ),
-                Category(
-                    2,
-                    "Clothing",
-                    "https://cdn-icons-png.flaticon.com/512/2935/2935183.png"
-                ),
-            )
+            val categories by categoryViewModel.categories.collectAsStateWithLifecycle()
 
             var selectedCategory by remember { mutableStateOf(0) }
 
@@ -78,10 +76,12 @@ fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onC
                 // Using items(items, key) is often better for performance and stability
                 items(items = categories) { category ->
                     CategoryChip(
-                        icon = category.imageUrl,
+                        icon = category.iconUrl,
                         text = category.name,
                         isSelected = selectedCategory == category.id,
-                        onClick = { selectedCategory = category.id }
+                        onClick = { selectedCategory = category.id
+                        navController.navigate(Screens.ProductList.createRoute(category.id))
+                        }
                     )
                 }
             }
@@ -93,25 +93,17 @@ fun HomeScreen(navController: NavHostController, onProfileClick: () -> Unit, onC
                 /* Handle action click */
             }
 
-            val products = listOf(
-                Product(
-                    id = "1",
-                    name = "Smart phone",
-                    price = 999.99,
-                    imageUrl = "https://image.pngaaa.com/404/1144404-middle.png",
-                ),
-                Product(
-                    id = "2",
-                    name = "Laptop",
-                    price = 1999.99,
-                    imageUrl = "https://image.pngaaa.com/404/1144404-middle.png",                ),
-            )
+            productViewModel.getAllProductsFromFireStore()
+            val products by productViewModel.allProducts.collectAsStateWithLifecycle()
+
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(products) { product ->
-                    FeaturedProductCard(product) { }
+                    FeaturedProductCard(product) {
+                        navController.navigate(Screens.ProductsDetails.createRoute(product.id))
+                    }
                 }
             }
 

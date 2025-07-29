@@ -16,8 +16,12 @@ import com.example.ecommerceapp.screens.home.HomeScreen
 import com.example.ecommerceapp.screens.navigation.Screens
 import com.example.ecommerceapp.screens.products.ProductDetailScreen
 import com.example.ecommerceapp.screens.products.ProductScreen
+import com.example.ecommerceapp.screens.profile.SignInScreen
+import com.example.ecommerceapp.screens.profile.SignUpScreen
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +51,7 @@ class MainActivity : ComponentActivity() {
                         ProfileScreen(navCont = navController, onSignOut = {})
                     }
                     composable(Screens.Categories.route) {
-                        CategoryScreen(navCont = navController, onCategoryClick = {})
+                        CategoryScreen(navCont = navController)
                     }
                     composable(Screens.ProductsDetails.route) {
                         val productId = it.arguments?.getString("productId")
@@ -59,6 +63,16 @@ class MainActivity : ComponentActivity() {
                         val categoryId = it.arguments?.getString("categoryId")
                         if (categoryId != null)
                             ProductScreen(categoryId = categoryId, navController)
+                    }
+                    composable(Screens.SignIn.route) {
+                        SignInScreen(
+                            onSignInSuccess = { navController.navigate(Screens.Home.route) },
+                            onNavigateToSignUp = { navController.navigate(Screens.SignUp.route) })
+                    }
+                    composable(Screens.SignUp.route) {
+                        SignUpScreen(
+                            onSignUpSuccess = { navController.navigate(Screens.Home.route) },
+                            onNavigateToLogin = { navController.navigate(Screens.SignIn.route) })
                     }
                 }
             }

@@ -12,28 +12,24 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.ecommerceapp.model.Category
 import com.example.ecommerceapp.screens.navigation.Screens
+import com.example.ecommerceapp.viewmodels.CategoryViewModel
 
 @Composable
-fun CategoryScreen(navCont: NavHostController, onCategoryClick: () -> Unit) {
-    // mock the categories
-    val categories = listOf(
-        Category(
-            1,
-            "Electronics",
-            "https://cdn-icons-png.flaticon.com/512/1555/1555401.png"
-        ),
-        Category(
-            2,
-            "Clothing",
-            "https://cdn-icons-png.flaticon.com/512/2935/2935183.png"
-        ),
-    )
+fun CategoryScreen(
+    navCont: NavHostController,
+    categoryViewModel: CategoryViewModel = hiltViewModel()
+) {
+    val categories by categoryViewModel.categories.collectAsStateWithLifecycle()
+
     if (categories.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(text = "No categories found", style = MaterialTheme.typography.titleLarge)
