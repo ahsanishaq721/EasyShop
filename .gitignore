@@ -12,3 +12,4 @@ app/app.iml
 java_pid11400.hprof
 *.hprof
 app/release/
+app/google-services.json
