@@ -9,6 +9,7 @@ import javax.inject.Inject
 class CartRepository @Inject constructor(private val cartDao: CartDao) {
 
     val allCartItems: Flow<List<Product>> = cartDao.getAllCartItems()
+
     suspend fun addToCart(product: Product) {
         val existingItem = cartDao.getCartItemById(product.id)
         if (existingItem != null) {
@@ -25,6 +26,4 @@ class CartRepository @Inject constructor(private val cartDao: CartDao) {
     suspend fun clearCart() {
         cartDao.clearCart()
     }
-
-
 }

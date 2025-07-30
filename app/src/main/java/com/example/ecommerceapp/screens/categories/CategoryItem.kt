@@ -45,7 +45,8 @@ fun CategoryItem(category: Category, onClick: () -> Unit) {
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         )
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -73,7 +74,7 @@ fun CategoryItem(category: Category, onClick: () -> Unit) {
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceVariant) // This is good, it's theme-aware
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(
@@ -91,9 +92,9 @@ fun CategoryItem(category: Category, onClick: () -> Unit) {
 
                 Text(
                     text = category.name,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    color = Color(0xF4000000)
                 )
             }
         }
@@ -104,6 +105,12 @@ fun CategoryItem(category: Category, onClick: () -> Unit) {
 @Composable
 fun CategoryItemPreview() {
     EcommerceAppTheme {
-     CategoryItem(category = Category(1, "Electronics", "https://image.pngaaa.com/404/1144404-middle.png")) { }
+        CategoryItem(
+            category = Category(
+                1,
+                "Electronics",
+                "https://image.pngaaa.com/404/1144404-middle.png"
+            )
+        ) { }
     }
 }

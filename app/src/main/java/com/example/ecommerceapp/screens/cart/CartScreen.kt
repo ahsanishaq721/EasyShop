@@ -14,29 +14,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.example.ecommerceapp.model.Product
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import com.example.ecommerceapp.viewmodels.CartViewModel
 
 @Composable
-fun CartScreen(navCont: NavHostController) {
-    val cartItems = listOf(
-        Product(
-            id = "1",
-            name = "Smart phone",
-            price = 999.99,
-            imageUrl = "https://image.pngaaa.com/404/1144404-middle.png",
-        )
-    )
+fun CartScreen(navCont: NavHostController,modifier: Modifier = Modifier, cartViewModel: CartViewModel = hiltViewModel()) {
+    val cartItems by cartViewModel.cartItems.collectAsStateWithLifecycle(emptyList())
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
@@ -53,7 +49,7 @@ fun CartScreen(navCont: NavHostController) {
             ) {
                 Text(text = "Your cart is empty", style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(16.dp))
-                Button(onClick = {}) {
+                Button(onClick = { navCont.popBackStack() }) {
                     Text(text = "Continue Shopping")
                 }
             }
@@ -61,6 +57,7 @@ fun CartScreen(navCont: NavHostController) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(cartItems) {
                     CartItemCard(it) {
+                        cartViewModel.deleteCartItem(it)
                     }
                 }
             }
@@ -80,15 +77,17 @@ fun CartScreen(navCont: NavHostController) {
                 Text(text = "Total", style = MaterialTheme.typography.titleMedium)
 
                 Text(
-                    text = "$${cartItems.sumOf { it.price }}",
+                    text = "$${cartViewModel.calculateTotal(cartItems)}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
             }
             Spacer(Modifier.height(16.dp))
-            Button(onClick = {}, modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)) {
+            Button(
+                onClick = {}, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
                 Text(text = "Proceed to Checkout")
             }
         }

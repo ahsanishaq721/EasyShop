@@ -9,11 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold // <-- Import Scaffold
+import androidx.compose.material3.SnackbarHost // <-- Import SnackbarHost
+import androidx.compose.material3.SnackbarHostState // <-- Import SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,78 +29,117 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import com.example.ecommerceapp.viewmodels.AuthViewModel
 
 @Composable
-fun SignInScreen(onSignInSuccess: () -> Unit, onNavigateToSignUp: () -> Unit) {
+fun SignInScreen(
+    onSignInSuccess: () -> Unit,
+    onNavigateToSignUp: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val authState = true
+    val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    if (authState) {
-        onSignInSuccess()
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    val isLoading = authState is AuthViewModel.AuthState.Loading
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    ) {
-        Text(
-            text = "Login",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(32.dp)
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            singleLine = true
-        )
-
-        Spacer(Modifier.height(16.dp))
-        Button(
-            onClick = {
-                // viewmodel call here
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            enabled = email.isNotBlank() && password.isNotBlank()
-        ) {
-            // if auth state is loading then show the circular bar else the sign up text
-            Text(text = "Sign In")
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthViewModel.AuthState.Success -> {
+                onSignInSuccess()
+            }
+            is AuthViewModel.AuthState.Error -> { // <-- Handle Error state
+                snackBarHostState.showSnackbar(
+                    message = (authState as AuthViewModel.AuthState.Error).message, // Assuming AuthState.Error has a 'message' property
+                    actionLabel = "Dismiss"
+                )
+            }
+            else -> {
+                // Do nothing for other states (Idle, Loading)
+            }
         }
-        Spacer(Modifier.height(16.dp))
-        TextButton(
-            onClick = onNavigateToSignUp
+    }
+
+    Scaffold( // <-- Wrap your content in Scaffold
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        }
+    ) { paddingValues -> // <-- Use paddingValues from Scaffold
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues) // <-- Apply padding from Scaffold
+                .padding(horizontal = 16.dp), // Added horizontal padding for the content
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Don't have an account? Sign Up")
+            Text(
+                text = "Login",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(32.dp)
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                singleLine = true,
+                enabled = !isLoading
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                singleLine = true,
+                enabled = !isLoading
+            )
+
+            Spacer(Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    authViewModel.login(email, password)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                enabled = email.isNotBlank() && password.isNotBlank() && !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.height(24.dp)
+                    )
+                } else {
+                    Text(text = "Sign In")
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+            TextButton(
+                onClick = onNavigateToSignUp,
+                enabled = !isLoading
+            ) {
+                Text(text = "Don't have an account? Sign Up")
+            }
         }
     }
 }

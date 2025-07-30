@@ -26,12 +26,15 @@ import com.example.ecommerceapp.viewmodels.CategoryViewModel
 @Composable
 fun CategoryScreen(
     navCont: NavHostController,
-    categoryViewModel: CategoryViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    categoryViewModel: CategoryViewModel = hiltViewModel(),
+    onCartClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val categories by categoryViewModel.categories.collectAsStateWithLifecycle()
 
     if (categories.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(text = "No categories found", style = MaterialTheme.typography.titleLarge)
         }
     } else {
@@ -40,7 +43,7 @@ fun CategoryScreen(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
         ) {

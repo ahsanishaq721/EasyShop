@@ -18,24 +18,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.ecommerceapp.model.UserProfile
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import com.example.ecommerceapp.viewmodels.AuthViewModel
 
 @Composable
 fun ProfileScreen(
-    navCont: NavHostController,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     // mocking user
-    val currentUserProfile = UserProfile("22", "Ehsan Ishaq", "ahsan.ishaq10@gmail.com")
+    val currentUserProfile by remember { mutableStateOf(authViewModel.currentUser) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,13 +64,13 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(24.dp))
         Text(
-            text = currentUserProfile.name,
+            text = currentUserProfile?.name.toString(),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
 
-        Text(text = currentUserProfile.email, style = MaterialTheme.typography.bodyMedium)
+        Text(text = currentUserProfile?.email.toString(), style = MaterialTheme.typography.bodyMedium)
 
         Spacer(Modifier.height(8.dp))
 
@@ -81,7 +84,7 @@ fun ProfileScreen(
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
             )
         ) {
-            Text(text = "Sign out", Modifier.padding(4.dp))
+            Text(text = if (authViewModel.isLoggedIn) "Sign Out" else "Sign In", Modifier.padding(4.dp))
         }
     }
 }
@@ -90,6 +93,6 @@ fun ProfileScreen(
 @Composable
 fun CartScreenPreview() {
     EcommerceAppTheme {
-        ProfileScreen(navCont = NavHostController(context = LocalContext.current), onSignOut = {})
+        ProfileScreen(onSignOut = {})
     }
 }

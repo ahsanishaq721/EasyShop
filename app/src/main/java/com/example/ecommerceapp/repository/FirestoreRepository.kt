@@ -71,4 +71,21 @@ class FirestoreRepository @Inject constructor(
             emptyList()
         }
     }
+
+    suspend fun searchProducts(query: String): List<Product> {
+        return try {
+            val searchQuery = query.lowercase()
+            val allProducts = firestore.collection("products")
+                .get()
+                .await()
+                .documents.mapNotNull { it.toObject(Product::class.java) }
+            allProducts.filter {
+                it.name.lowercase().contains(searchQuery)
+            }
+
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
 }

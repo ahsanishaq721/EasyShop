@@ -21,14 +21,13 @@ fun MyTopAppBar(onProfileClick: () -> Unit, onCartClick: () -> Unit) {
         title = {
             Text(
                 text = "ShopEasy", style = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold
                 )
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFF1565c0),
-            titleContentColor = Color.White
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor =  Color.White,
         ),
 
         actions = {

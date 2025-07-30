@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.example.ecommerceapp.ui.theme.CategoryChipColor
+
 @Composable
 fun CategoryChip(
     icon: String,
@@ -28,13 +29,20 @@ fun CategoryChip(
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) CategoryChipColor else Color.Gray.copy(
-                0.1f
-            )
+            containerColor = if (isSelected) {
+                CategoryChipColor // Selected color
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerLow // Or surfaceContainer, surfaceContainerHigh for more prominence
+            },
+            contentColor = if (isSelected) {
+                MaterialTheme.colorScheme.onPrimary // Content on selected chip
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant // Content on unselected chip
+            }
         ),
         border = BorderStroke(
             width = if (isSelected) 0.dp else 1.dp,
-            color = Color.LightGray.copy(0.3f)
+            color = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline
         ),
         modifier = Modifier.clickable { onClick() }
     ) {
@@ -46,12 +54,12 @@ fun CategoryChip(
                 painter = rememberAsyncImagePainter(icon),
                 contentDescription = text,
                 modifier = Modifier.size(20.dp),
-                tint = if (isSelected) Color.White else Color.Black
+                tint = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
                 text = text,
-                color = if (isSelected) Color.White else Color.Black,
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(start = 8.dp)
             )

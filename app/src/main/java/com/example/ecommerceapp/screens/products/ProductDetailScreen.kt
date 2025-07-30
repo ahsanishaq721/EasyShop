@@ -23,16 +23,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
+import com.example.ecommerceapp.ui.theme.EcommerceAppTheme
+import com.example.ecommerceapp.viewmodels.CartViewModel
 import com.example.ecommerceapp.viewmodels.ProductDetailViewModel
 
 @Composable
 fun ProductDetailScreen(
     productId: String,
-    productDetailViewModel: ProductDetailViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    productDetailViewModel: ProductDetailViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
     productDetailViewModel.fetchProductDetails(productId)
     val selectedProduct by productDetailViewModel.product.collectAsStateWithLifecycle()
@@ -41,7 +46,7 @@ fun ProductDetailScreen(
         Text(text = "Product not found", modifier = Modifier.padding(16.dp))
     } else {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
@@ -56,7 +61,6 @@ fun ProductDetailScreen(
                     .height(300.dp)
                     .clip(RoundedCornerShape(12.dp))
             )
-
 
             Spacer(modifier = Modifier.height(16.dp))
             selectedProduct?.name?.let {
@@ -82,7 +86,8 @@ fun ProductDetailScreen(
         }
 
         IconButton(
-            onClick = {}, modifier = Modifier
+            onClick = { cartViewModel.addToCart(selectedProduct!!) },
+            modifier = modifier
                 .padding(16.dp)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
@@ -95,5 +100,18 @@ fun ProductDetailScreen(
                 tint = Color.White
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProductDetailScreenPreview() {
+    EcommerceAppTheme {
+        ProductDetailScreen(
+            productId = "1",
+            modifier = Modifier,
+            productDetailViewModel = hiltViewModel(),
+            cartViewModel = hiltViewModel()
+        )
     }
 }

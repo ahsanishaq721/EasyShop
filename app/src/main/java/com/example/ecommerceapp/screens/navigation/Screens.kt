@@ -3,7 +3,6 @@ package com.example.ecommerceapp.screens.navigation
 sealed class Screens(val route: String) {
     object Home : Screens("Home")
     object Categories : Screens("Categories")
-    object Profile : Screens("Profile")
     object Cart : Screens("Cart")
     object ProductsDetails : Screens("product_details/{productId}") {
         fun createRoute(productId: String) = "product_details/$productId"
@@ -15,5 +14,6 @@ sealed class Screens(val route: String) {
 
     object SignIn : Screens("SignIn")
     object SignUp : Screens("SignUp")
+    object Profile : Screens("Profile")
 
 }

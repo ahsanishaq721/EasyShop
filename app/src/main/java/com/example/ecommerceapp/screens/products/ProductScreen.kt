@@ -17,13 +17,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.ecommerceapp.screens.navigation.Screens
+import com.example.ecommerceapp.viewmodels.CartViewModel
 import com.example.ecommerceapp.viewmodels.ProductViewModel
 
 @Composable
 fun ProductScreen(
+    modifier: Modifier = Modifier,
     categoryId: String,
     navController: NavHostController,
-    productViewModel: ProductViewModel = hiltViewModel()
+    productViewModel: ProductViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(categoryId) {
@@ -31,7 +34,7 @@ fun ProductScreen(
     }
     val products by productViewModel.products.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = "Category ID: $categoryId",
             style = MaterialTheme.typography.titleLarge,
@@ -44,12 +47,12 @@ fun ProductScreen(
                 modifier = Modifier.padding(16.dp)
             )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+            LazyColumn(modifier = modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
                 items(products) {
                     ProductItem(
                         product = it,
                         onClick = { navController.navigate(Screens.ProductsDetails.createRoute(it.id)) },
-                        onAddToCart = {}
+                        onAddToCart = { cartViewModel.addToCart(it) }
                     )
                 }
             }
